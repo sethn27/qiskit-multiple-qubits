@@ -103,8 +103,9 @@ class HybridActorNetwork(nn.Module):
                                               #quantum_instance = quantum_instance )
         
         self.quantum_layer = TorchConnector(quantum_neural_network)
-
-        #self.classical_layer_1 = nn.Linear(64, 128)
+        print(self.quantum_circuit)
+        sys.exit()
+        #self.classical_layer_1 = nn.Linear(8*6, 128)
         #self.classical_layer_2 = nn.Linear(128, 256)
         self.classical_layer_3 = nn.Linear(16*6, self.action_space)
 
@@ -124,6 +125,7 @@ class HybridActorNetwork(nn.Module):
      
 
     def forward(self, current_state):
+        
         output_layer_1 = self.quantum_layer(current_state)
         
         #output_layer_1 = 1*output_layer_1[0] + (-1)*output_layer_1[1]
@@ -206,7 +208,7 @@ class HybridCriticNetwork(nn.Module):
         
         self.quantum_layer = TorchConnector(quantum_neural_network)
 
-        #self.classical_layer_1 = nn.Linear(64, 128)
+        #self.classical_layer_1 = nn.Linear(16*6, 128)
         #self.classical_layer_2 = nn.Linear(128, 256)
         self.classical_layer_3 = nn.Linear(16*6, 1)
 
@@ -233,7 +235,7 @@ class HybridCriticNetwork(nn.Module):
         #output_layer_1 = 1*output_layer_1[0] + (-1)*output_layer_1[1]
         output_layer_1 = output_layer_1.repeat(16)
         #output_layer_2 = F.relu(self.classical_layer_1(output_layer_1))
-        #output_layer_3 = F.relu(self.classical_layer_2(output_layer_1))
+        #output_layer_3 = F.relu(self.classical_layer_2(output_layer_2))
         state_value = self.classical_layer_3(output_layer_1)
 
         return state_value
@@ -338,17 +340,17 @@ class QERL_Agent():
         return actor_loss.item(), critic_loss.item()
 
 def data_transformation(state):
-        return state
-        #return [mt.atan(i) for i in state]
+        #return state
+        return [mt.atan(i) for i in state]
 
-enviroment = random.seed(34)
+#enviroment = random.seed(34)
 enviroment = gym.make("Acrobot-v1").unwrapped
 
 state_space = enviroment.observation_space.shape[0]
 action_space = enviroment.action_space.n
 
-actor_learning_rate = 0.04
-critic_learning_rate = 0.4
+actor_learning_rate = 0.004
+critic_learning_rate = 0.04
 
 max_time_steps = 500
 number_of_epochs = 1
@@ -438,6 +440,6 @@ plt.plot(np.array(list(range(0, len(critic_loss)))), critic_loss, label='Critic 
 plt.plot(np.array(list(range(0, len(critic_loss), constant_for_average))), average_critic_loss, label='Average Critic Loss')
 plt.legend()
 plt.show()
-np.savetxt('1_QNN_01_008_Actor.txt', actor_loss)
-np.savetxt('1_QNN_01_008_Score.txt', score)
-np.savetxt('1_QNN_01_008_Critic.txt', critic_loss)
+np.savetxt('1_QNN_04_4_Actor.txt', actor_loss)
+np.savetxt('1_QNN_04_4_Score.txt', score)
+np.savetxt('1_QNN_04_4_Critic.txt', critic_loss)
